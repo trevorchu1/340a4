@@ -5,7 +5,7 @@ The REST API performs CRUD operations on Animal objects as described below.
 ## API Endpoints
 Use POSTMAN to try the following endpoints:
 
-## Get list of Students
+## Get list of Animals
 
 ### Request
 
@@ -21,7 +21,7 @@ Use POSTMAN to try the following endpoints:
    
      ]
 
-## Get a specific Student
+## Get a specific Animal
 
 ### Request
 
@@ -35,7 +35,7 @@ Use POSTMAN to try the following endpoints:
     }
 
      
-## Create a new Student
+## Create a new Animal
 
 ### Request
 
