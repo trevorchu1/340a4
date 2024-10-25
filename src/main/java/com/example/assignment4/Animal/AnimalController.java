@@ -1,13 +1,16 @@
 package com.example.assignment4.Animal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/animals")
 public class AnimalController {
 
@@ -15,46 +18,55 @@ public class AnimalController {
     private AnimalService animalService;
 
     @GetMapping("/all")
-    public List<Animal> getAllAnimals() {
-        return animalService.getAllAnimals();
+    public String getAllAnimals(Model model){
+        model.addAttribute("animalList", animalService.getAllAnimals());
+        model.addAttribute("title", "All Animals");
+        return "animal-list";
     }
 
     @GetMapping("/{id}")
-    public Optional<Animal> getOneAnimal(@PathVariable int id){
-        return animalService.getAnimalById(id);
+    public String getOneAnimal(@PathVariable int animalId, Model model){
+        model.addAttribute("animal", animalService.getAnimalById(animalId));
+        model.addAttribute("title", animalId);
+        return "animal-details";
     }
 
     @GetMapping("/species")
-    public List<Animal> getAnimalBySpecies(@RequestParam(name = "species", defaultValue = "feline") String species){
-        return animalService.getAnimalsBySpecies(species);
+    public String getAnimalBySpecies(@RequestParam(name = "species", defaultValue = "feline") String species, Model model){
+        model.addAttribute("animalList", animalService.getAnimalsBySpecies(species));
+        model.addAttribute("title", "Species Animals "+species);
+        return "animal-list";
     }
 
     @PostMapping("/new")
-    public List<Animal> addAnimal(@RequestBody Animal animal){
+    public String addAnimal(@RequestBody Animal animal){
         animalService.addAnimal(animal);
-        return animalService.getAllAnimals();
+        return "redirect:/animals/all";
     }
 
-    @PutMapping("/update/{id}")
-    public Optional<Animal> updateAnimal(@PathVariable int id, @RequestBody Animal animal){
-        animalService.updateAnimal(id, animal);
-        return animalService.getAnimalById(id);
+    @GetMapping("/update/{id}")
+    public String showUpdateForm(@PathVariable int id, Model model){
+        model.addAttribute("animal", animalService.getAnimalById(id));
+        return "animal-update";
+    }
+
+    @PostMapping("/update")
+    public String updateAnimal(Animal animal){
+        animalService.addAnimal(animal);
+        return "redirect:/amimals/" + animal.getAnimalId();
     }
 
 
     @GetMapping("/search")
-    public ResponseEntity<List<Animal>> searchAnimals(@RequestParam String name){
-        List<Animal> animals = animalService.searchAnimalsByName(name);
-        if(animals.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(animals);
+    public Animal searchAnimals(@RequestParam String name){
+        return (Animal) animalService.searchAnimalsByName(name);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public List<Animal> deleteAnimalById(@PathVariable int id){
-        animalService.deleteAnimalById(id);
-        return animalService.getAllAnimals();
+    @GetMapping("/delete/{id}")
+    public String deleteAnimalById(@PathVariable int animalId){
+        animalService.deleteAnimalById(animalId);
+        return "redirect:/animals/all";
+
     }
 
 
